@@ -10,29 +10,15 @@ def get_html(url, params=None):
 
 def get_content_img(html):
     items = [a.get('data-src') for a in bs(html, 'html.parser').find_all('img', class_='rg_i Q4LuWd')]
-    return("" if items == [] else items[random.randint(0, len(items)-1)])
+    return("Не знайдено" if items == [] else items[random.randint(0, len(items)-1)])
 
 
 def parse_wiki(string):
 	url = 'https://uk.wikipedia.org/wiki/'+string
 	html = get_html(url)
-
-	text = ''
-	if html.status_code == 200:
-		text = bs(html.text, 'html.parser').find("div", {'class':'mw-parser-output'}).find("p").get_text()
-
-	if(text != ''):
-		return text
-	else:
-		return "Не знайдено"
+	return "Не знайдено" if html.status_code != 200 else bs(html.text, 'html.parser').find("div", {'class':'mw-parser-output'}).find("p").get_text()
 
 def search_google_img(string):
 	url = 'https://www.google.com/search?tbm=isch&q='+string
 	html = get_html(url)
-	text = ''
-	if html.status_code == 200:
-		text = get_content_img(html.text)
-	if(text != ''):
-		return text
-	else:
-		return "Не знайдено"
+	return "Не знайдено" if html.status_code != 200 else get_content_img(html.text)
